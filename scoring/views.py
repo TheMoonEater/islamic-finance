@@ -6,6 +6,11 @@ from clients.models import Client
 from .models import Scoring
 from .serializers import ScoringSerializer
 
+from .serializers import (
+    ScoringSerializer,
+    ClientScoringSerializer
+)
+
 from .services import (
     calcul_score,
     get_decision
@@ -42,6 +47,9 @@ class CalculateScoringView(APIView):
             decision=decision
         )
 
-        serializer = ScoringSerializer(scoring)
+        if request.user.role == 'CLIENT':
+            serializer = ClientScoringSerializer(scoring)
+        else:
+            serializer = ScoringSerializer(scoring)
 
         return Response(serializer.data)

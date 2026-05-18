@@ -1,6 +1,16 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import BasePermission
+
+from rest_framework.permissions import (
+    IsAuthenticated
+)
+
+from users.permissions import (
+    IsEmployeOrAdmin
+    )
 
 from .models import (
     DemandeFinancement,
@@ -139,10 +149,6 @@ class ChangeStatusView(APIView):
     IsEmployeOrAdmin
     ]
 
-    from users.permissions import (
-    IsEmployeOrAdmin
-    )
 
 
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.permissions import BasePermission
+
