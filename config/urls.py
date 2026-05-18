@@ -27,6 +27,7 @@ urlpatterns = [
     path('api/', include('simulations.urls')),
     path('api/', include('workflow.urls')),
     path('api/', include('documents.urls')),
+    path('api/', include('dashboard.urls')),
 ]
 
 
