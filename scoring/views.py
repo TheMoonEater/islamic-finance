@@ -1,0 +1,47 @@
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+
+from clients.models import Client
+from .models import Scoring
+from .serializers import ScoringSerializer
+
+from .services import (
+    calcul_score,
+    get_decision
+)
+
+
+class CalculateScoringView(APIView):
+
+    def post(self, request):
+
+        client_id = request.data.get("client_id")
+        mensualite = float(request.data.get("mensualite"))
+
+        try:
+            client = Client.objects.get(id=client_id)
+
+        except Client.DoesNotExist:
+            return Response(
+                {"error": "Client introuvable"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        score, taux = calcul_score(
+            client,
+            mensualite
+        )
+
+        decision = get_decision(score)
+
+        scoring = Scoring.objects.create(
+            client=client,
+            score=score,
+            taux_endettement=taux,
+            decision=decision
+        )
+
+        serializer = ScoringSerializer(scoring)
+
+        return Response(serializer.data)
