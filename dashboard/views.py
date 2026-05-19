@@ -10,6 +10,7 @@ from rest_framework.permissions import (
 )
 
 from users.permissions import (
+    IsBankStaff,
     IsEmployeOrAdmin
 )
 
@@ -44,3 +45,8 @@ class WorkflowStatsView(APIView):
         data = demandes_by_status()
 
         return Response(data)
+
+
+permission_classes = [
+    IsBankStaff
+]

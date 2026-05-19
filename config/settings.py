@@ -51,6 +51,9 @@ INSTALLED_APPS = [
     'workflow',
     'documents',
     'dashboard',
+    'catalog',
+    'cart',
+    'orders',
 ]
 
 MIDDLEWARE = [

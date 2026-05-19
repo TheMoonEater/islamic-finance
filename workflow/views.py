@@ -22,7 +22,8 @@ from .serializers import (
 )
 
 from .services import (
-    can_transition
+    can_transition,
+    can_validate
 )
 
 from clients.models import Client
@@ -82,6 +83,10 @@ class CreateDemandeView(APIView):
 
 
 class ChangeStatusView(APIView):
+    permission_classes = [
+        IsAuthenticated,
+        IsEmployeOrAdmin
+    ]
 
     def post(self, request):
 
@@ -127,6 +132,18 @@ class ChangeStatusView(APIView):
                 status=400
             )
 
+        if not can_validate(
+            request.user.role,
+            nouveau_statut
+        ):
+
+            return Response(
+                {
+                    "error": "Permission refusée"
+                },
+                status=403
+            )
+
         demande.statut = nouveau_statut
         demande.commentaire = commentaire
         demande.save()
@@ -143,11 +160,6 @@ class ChangeStatusView(APIView):
         )
 
         return Response(serializer.data)
-    
-    permission_classes = [
-    IsAuthenticated,
-    IsEmployeOrAdmin
-    ]
 
 
 

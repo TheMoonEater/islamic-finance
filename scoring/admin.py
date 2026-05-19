@@ -1,3 +1,9 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import (
+    Scoring,
+    ScoringRule
+)
+
+admin.site.register(Scoring)
+admin.site.register(ScoringRule)

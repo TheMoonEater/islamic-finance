@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from clients.models import Client
+from islamic_finance.users.permissions import CanManageScoring
 from .models import Scoring
 from .serializers import ScoringSerializer
 
@@ -53,3 +54,8 @@ class CalculateScoringView(APIView):
             serializer = ScoringSerializer(scoring)
 
         return Response(serializer.data)
+    
+    
+permission_classes = [
+    CanManageScoring
+]
