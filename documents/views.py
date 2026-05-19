@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 
+from islamic_finance import scoring
 from scoring.models import Scoring
 from simulations.models import Simulation
 
@@ -18,8 +19,13 @@ def scoring_pdf_view(
         id=scoring_id
     )
 
+    is_client = (
+    request.user.role == 'CLIENT'
+    )
+
     pdf = generate_scoring_pdf(
-        scoring
+    scoring,
+    is_client=is_client
     )
 
     response = HttpResponse(
@@ -27,10 +33,15 @@ def scoring_pdf_view(
         content_type='application/pdf'
     )
 
-    response[
-        'Content-Disposition'
-    ] = 'attachment; filename="scoring.pdf"'
+    filename = (
+    f"{scoring.client.nom}"
+    f"{scoring.client.prenom}"
+    f"Scoring.pdf"
+  )
 
+    response[
+    'Content-Disposition'
+] = f'attachment; filename="{filename}"'
     return response
 
 
@@ -51,9 +62,15 @@ def simulation_pdf_view(
         pdf,
         content_type='application/pdf'
     )
+    filename = (
+    f"{simulation.client.nom}"
+    f"{simulation.client.prenom}"
+    f"Simulation.pdf"
+)
 
     response[
-        'Content-Disposition'
-    ] = 'attachment; filename="simulation.pdf"'
+    'Content-Disposition'
+] = f'attachment; filename="{filename}"'
+
 
     return response
