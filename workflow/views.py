@@ -9,8 +9,8 @@ from rest_framework.permissions import (
 )
 
 from users.permissions import (
-    IsEmployeOrAdmin
-    )
+    IsBankStaff
+)
 
 from .models import (
     DemandeFinancement,
@@ -85,7 +85,7 @@ class CreateDemandeView(APIView):
 class ChangeStatusView(APIView):
     permission_classes = [
         IsAuthenticated,
-        IsEmployeOrAdmin
+        IsBankStaff
     ]
 
     def post(self, request):

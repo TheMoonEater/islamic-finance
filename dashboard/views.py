@@ -11,7 +11,6 @@ from rest_framework.permissions import (
 
 from users.permissions import (
     IsBankStaff,
-    IsEmployeOrAdmin
 )
 
 from .services import (
@@ -23,7 +22,7 @@ class DashboardStatsView(APIView):
 
     permission_classes = [
         IsAuthenticated,
-        IsEmployeOrAdmin
+        IsBankStaff,
     ]
 
     def get(self, request):
@@ -37,7 +36,7 @@ class WorkflowStatsView(APIView):
 
     permission_classes = [
         IsAuthenticated,
-        IsEmployeOrAdmin
+        IsBankStaff
     ]
 
     def get(self, request):
@@ -47,6 +46,4 @@ class WorkflowStatsView(APIView):
         return Response(data)
 
 
-permission_classes = [
-    IsBankStaff
-]
+# No module-level permission_classes required; views define their own

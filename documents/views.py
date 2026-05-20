@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 
-from islamic_finance import scoring
+
 from scoring.models import Scoring
 from simulations.models import Simulation
 

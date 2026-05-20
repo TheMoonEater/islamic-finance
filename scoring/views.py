@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from clients.models import Client
-from islamic_finance.users.permissions import CanManageScoring
+from users.permissions import CanManageScoring
 from .models import Scoring
 from .serializers import ScoringSerializer
 
@@ -19,26 +19,22 @@ from .services import (
 
 
 class CalculateScoringView(APIView):
+    permission_classes = [
+        CanManageScoring
+    ]
 
     def post(self, request):
-
         client_id = request.data.get("client_id")
-        mensualite = float(request.data.get("mensualite"))
 
         try:
             client = Client.objects.get(id=client_id)
-
         except Client.DoesNotExist:
             return Response(
                 {"error": "Client introuvable"},
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        score, taux = calcul_score(
-            client,
-            mensualite
-        )
-
+        score, taux = calcul_score(client)
         decision = get_decision(score)
 
         scoring = Scoring.objects.create(
@@ -54,8 +50,3 @@ class CalculateScoringView(APIView):
             serializer = ScoringSerializer(scoring)
 
         return Response(serializer.data)
-    
-    
-permission_classes = [
-    CanManageScoring
-]
