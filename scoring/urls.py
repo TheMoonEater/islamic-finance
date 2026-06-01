@@ -4,6 +4,7 @@ from .views import CalculateScoringView
 urlpatterns = [
     path(
         'scoring/calculate/',
-        CalculateScoringView.as_view()
+        CalculateScoringView.as_view(),
+        name='calculate-scoring'
     ),
 ]

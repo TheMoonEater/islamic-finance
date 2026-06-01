@@ -68,6 +68,7 @@ def get_decision(score):
     if score >= 80:
         return "ELIGIBLE"
 
-
+    elif score >= 60:
+        return "A_ANALYSER"
 
     return "REFUSE"

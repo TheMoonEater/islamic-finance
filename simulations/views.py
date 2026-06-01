@@ -1,11 +1,16 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.generics import GenericAPIView
+from .serializers import (
+    SimulationSerializer,
+    SimulationInputSerializer
+)
 
 from clients.models import Client
 
 from .models import Simulation
-from .serializers import SimulationSerializer
+import simulations.serializers as serializers
 
 from .services import (
     calcul_montant_finance,
@@ -14,7 +19,9 @@ from .services import (
 )
 
 
-class CreateSimulationView(APIView):
+class CreateSimulationView(GenericAPIView):
+
+    serializer_class = SimulationInputSerializer
 
     def post(self, request):
 
@@ -73,8 +80,8 @@ class CreateSimulationView(APIView):
             mensualite=mensualite
         )
 
-        serializer = SimulationSerializer(
+        serializer = serializers.SimulationSerializer(
             simulation
-        )
+            )
 
         return Response(serializer.data)

@@ -48,19 +48,6 @@ class IsRetail(BasePermission):
         )
 
 
-class IsRisque(BasePermission):
-
-    def has_permission(
-        self,
-        request,
-        view
-    ):
-
-        return (
-            request.user.is_authenticated
-            and
-            request.user.role == 'RISQUE'
-        )
 
 
 class IsComite(BasePermission):
@@ -109,8 +96,6 @@ class IsBankStaff(BasePermission):
                 'EMPLOYE',
 
                 'RETAIL',
-
-                'RISQUE',
 
                 'COMITE',
 

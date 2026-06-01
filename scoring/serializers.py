@@ -1,20 +1,29 @@
 from rest_framework import serializers
-from .models import Scoring
 
 
-class ScoringSerializer(serializers.ModelSerializer):
+class ScoringSerializer(serializers.Serializer):
 
-    class Meta:
-        model = Scoring
-        fields = '__all__'
+    salaire = serializers.FloatField()
 
-class ClientScoringSerializer(
-    serializers.ModelSerializer):
+    charges = serializers.FloatField()
 
-    class Meta:
-        model = Scoring
-
-        fields = [
-            'decision',
-            'created_at'
+    marie = serializers.ChoiceField(
+        choices=[
+            ("oui", "Oui"),
+            ("non", "Non")
         ]
+    )
+
+    enfants = serializers.IntegerField()
+
+    type_contrat = serializers.ChoiceField(
+        choices=[
+            ("cdi", "CDI"),
+            ("cdd", "CDD"),
+            ("fonctionnaire", "Fonctionnaire")
+        ]
+    )
+
+    anciennete = serializers.IntegerField()
+
+    apport = serializers.FloatField()

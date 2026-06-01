@@ -1,52 +1,72 @@
-from rest_framework.views import APIView
+from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework import status
 
-from clients.models import Client
-from users.permissions import CanManageScoring
-from .models import Scoring
 from .serializers import ScoringSerializer
 
-from .serializers import (
-    ScoringSerializer,
-    ClientScoringSerializer
-)
 
-from .services import (
-    calcul_score,
-    get_decision
-)
+class CalculateScoringView(generics.GenericAPIView):
 
-
-class CalculateScoringView(APIView):
-    permission_classes = [
-        CanManageScoring
-    ]
+    serializer_class = ScoringSerializer
 
     def post(self, request):
-        client_id = request.data.get("client_id")
 
-        try:
-            client = Client.objects.get(id=client_id)
-        except Client.DoesNotExist:
-            return Response(
-                {"error": "Client introuvable"},
-                status=status.HTTP_404_NOT_FOUND
-            )
+        serializer = self.get_serializer(data=request.data)
 
-        score, taux = calcul_score(client)
-        decision = get_decision(score)
+        serializer.is_valid(raise_exception=True)
 
-        scoring = Scoring.objects.create(
-            client=client,
-            score=score,
-            taux_endettement=taux,
-            decision=decision
-        )
+        data = serializer.validated_data
 
-        if request.user.role == 'CLIENT':
-            serializer = ClientScoringSerializer(scoring)
+        score = 0
+
+        # salaire
+        if data["salaire"] >= 100000:
+            score += 30
+        elif data["salaire"] >= 50000:
+            score += 20
         else:
-            serializer = ScoringSerializer(scoring)
+            score += 10
 
-        return Response(serializer.data)
+        # marié
+        if data["marie"] == "oui":
+            score += 10
+
+        # enfants
+        if data["enfants"] <= 2:
+            score += 10
+
+        # contrat
+        if data["type_contrat"] == "cdi":
+            score += 25
+
+        elif data["type_contrat"] == "fonctionnaire":
+            score += 30
+
+        # ancienneté
+        if data["anciennete"] >= 5:
+            score += 15
+
+        # apport
+        if data["apport"] >= 500000:
+            score += 20
+
+        taux_endettement = (
+            data["charges"] / data["salaire"]
+        ) * 100
+
+        if taux_endettement < 35:
+            score += 20
+
+        decision = "ACCEPTE"
+
+        if score < 50:
+            decision = "REFUSE"
+
+        return Response({
+            "score": score,
+            "decision": decision,
+            "taux_endettement": round(
+                taux_endettement,
+                2
+            )
+        })
