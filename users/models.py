@@ -12,7 +12,6 @@ class User(AbstractUser):
 
     ('RETAIL', 'Retail'),
 
-    ('RISQUE', 'Risque'),
 
     ('COMITE', 'Comite'),
 
