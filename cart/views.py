@@ -1,41 +1,39 @@
-from rest_framework.views import APIView
+from rest_framework import viewsets
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework.decorators import action
 
-from islamic_finance import cart
-from users.models import User
+from .models import Cart, CartItem
+from .serializers import (
+    CartSerializer,
+    CartItemSerializer
+)
+
 from catalog.models import Product
-
-from .models import Cart
-from .models import CartItem
-
-from .serializers import CartSerializer
+from users.models import User
 
 
-class AddToCartView(APIView):
+class CartViewSet(viewsets.ModelViewSet):
 
-    def post(self, request):
+    queryset = Cart.objects.all()
+    serializer_class = CartSerializer
+
+
+class CartItemViewSet(viewsets.ModelViewSet):
+
+    queryset = CartItem.objects.all()
+    serializer_class = CartItemSerializer
+
+    @action(
+        detail=False,
+        methods=["post"]
+    )
+    def add(self, request):
 
         user_id = request.data.get("user_id")
         product_id = request.data.get("product_id")
 
-        try:
-            user = User.objects.get(id=user_id)
-
-        except User.DoesNotExist:
-            return Response(
-                {"error": "Utilisateur introuvable"},
-                status=404
-            )
-
-        try:
-            product = Product.objects.get(id=product_id)
-
-        except Product.DoesNotExist:
-            return Response(
-                {"error": "Produit introuvable"},
-                status=404
-            )
+        user = User.objects.get(id=user_id)
+        product = Product.objects.get(id=product_id)
 
         cart, created = Cart.objects.get_or_create(
             user=user
@@ -50,28 +48,6 @@ class AddToCartView(APIView):
             item.quantite += 1
             item.save()
 
-        return Response(
-            {"message": "Ajouté au panier"}
-        )
-    
-
-class CartDetailView(APIView):
-
-    def get(self, request, user_id):
-
-        try:
-            cart = Cart.objects.get(
-            user_id=user_id
-            )
-
-        except Cart.DoesNotExist:
-            return Response(
-            {"error": "Panier vide"},
-            status=404
-         )
-
-        serializer = CartSerializer(cart)
-
-        return Response(serializer.data)
-    
-
+        return Response({
+            "message": "Ajouté au panier"
+        })

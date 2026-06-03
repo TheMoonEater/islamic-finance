@@ -1,57 +1,50 @@
-from rest_framework.views import APIView
-from rest_framework.response import Response
+from rest_framework import viewsets
 
-from users.models import User
-from cart.models import Cart
-from cart.models import CartItem
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
 from .models import Order
 from .serializers import OrderSerializer
 
+from cart.models import Cart
 
-class CreateOrderView(APIView):
 
-    def post(self, request):
+class OrderViewSet(viewsets.ModelViewSet):
 
-        user_id = request.data.get(
-            "user_id"
-        )
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
 
-        try:
-            user = User.objects.get(
-                id=user_id
-            )
+    @action(
+        detail=False,
+        methods=["post"]
+    )
+    def create_from_cart(self, request):
 
-            cart = Cart.objects.get(
-                user=user
-            )
+        cart_id = request.data.get("cart_id")
 
-        except:
-            return Response(
-                {"error": "Panier introuvable"},
-                status=404
-            )
-
-        items = CartItem.objects.filter(
-            cart=cart
+        cart = Cart.objects.get(
+            id=cart_id
         )
 
         total = 0
 
-        for item in items:
-            total += item.total_price()
+        for item in cart.cartitem_set.all():
+
+            total += (
+                item.product.prix
+                * item.quantite
+            )
 
         order = Order.objects.create(
-            user=user,
+            user=cart.user,
             cart=cart,
-            total=total,
-            statut="PENDING"
+            total=total
         )
 
-        serializer = OrderSerializer(order)
+        serializer = OrderSerializer(
+            order
+        )
 
         return Response(
             serializer.data
         )
-    
-

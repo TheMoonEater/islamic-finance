@@ -6,9 +6,14 @@ from .models import CartItem
 
 class CartItemSerializer(serializers.ModelSerializer):
 
-    class Meta:
-        model = CartItem
-        fields = '__all__'
+        product_name = serializers.CharField(
+        source="product.nom",
+        read_only=True
+    )
+
+        class Meta:
+            model = CartItem
+            fields = '__all__'
 
 
 class CartSerializer(serializers.ModelSerializer):
