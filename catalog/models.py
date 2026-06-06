@@ -2,10 +2,7 @@ from django.db import models
 
 
 class Category(models.Model):
-
-    nom = models.CharField(
-        max_length=100
-    )
+    nom = models.CharField(max_length=100)
 
     def __str__(self):
         return self.nom
@@ -18,21 +15,17 @@ class Product(models.Model):
         on_delete=models.CASCADE
     )
 
-    nom = models.CharField(
-        max_length=200
-    )
+
+
+    nom = models.CharField(max_length=255)
 
     description = models.TextField()
-
+    
     prix = models.FloatField()
-
-    stock = models.IntegerField()
-
-    image = models.ImageField(
-        upload_to='products/',
-        blank=True,
-        null=True
-    )
+    
+    image = models.URLField(blank=True)
+    
+    stock = models.IntegerField(default=1)
 
     disponible_financement = models.BooleanField(
         default=True

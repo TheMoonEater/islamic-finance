@@ -9,3 +9,10 @@ class ProduitViewSet(viewsets.ModelViewSet):
     queryset = Produit.objects.all()
 
     serializer_class = ProduitSerializer
+
+
+    def list(self, request):
+
+        print("NB PRODUITS =", Produit.objects.count())
+
+        return super().list(request)
