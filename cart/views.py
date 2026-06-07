@@ -8,7 +8,7 @@ from .serializers import (
     CartItemSerializer
 )
 
-from catalog.models import Product
+from produits.models import Produit
 from users.models import User
 
 
@@ -33,7 +33,7 @@ class CartItemViewSet(viewsets.ModelViewSet):
         product_id = request.data.get("product_id")
 
         user = User.objects.get(id=user_id)
-        product = Product.objects.get(id=product_id)
+        product = Produit.objects.get(id=product_id)
 
         cart, created = Cart.objects.get_or_create(
             user=user

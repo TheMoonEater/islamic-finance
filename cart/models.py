@@ -1,7 +1,7 @@
 from django.db import models
 
 from users.models import User
-from catalog.models import Product
+from produits.models import Produit
 
 
 class Cart(models.Model):
@@ -27,7 +27,7 @@ class CartItem(models.Model):
     )
 
     product = models.ForeignKey(
-        Product,
+        Produit,
         on_delete=models.CASCADE
     )
 
