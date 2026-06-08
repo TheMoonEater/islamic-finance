@@ -1,6 +1,9 @@
 from django.urls import path
 
-from .views import RegisterView
+from .views import (
+    RegisterView,
+    CustomTokenObtainPairView
+)
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -16,7 +19,7 @@ urlpatterns = [
 
     path(
         'auth/login/',
-        TokenObtainPairView.as_view()
+        CustomTokenObtainPairView.as_view()
     ),
 
     path(

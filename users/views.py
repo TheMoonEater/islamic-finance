@@ -6,6 +6,16 @@ from .serializers import (
     RegisterSerializer
 )
 
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView
+)
+
+from .serializers import (
+    RegisterSerializer,
+    CustomTokenObtainPairSerializer
+)
+
+
 
 class RegisterView(APIView):
 
@@ -28,3 +38,11 @@ class RegisterView(APIView):
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
         )
+    
+
+class CustomTokenObtainPairView(
+    TokenObtainPairView
+):
+    serializer_class = (
+        CustomTokenObtainPairSerializer
+    )
