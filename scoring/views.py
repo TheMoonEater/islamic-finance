@@ -1,6 +1,9 @@
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework import status
+from scoring_config.models import (
+    ScoringConfig
+)
 
 from .serializers import ScoringSerializer
 
@@ -20,42 +23,49 @@ class CalculateScoringView(generics.GenericAPIView):
         score = 0
 
         # salaire
+        config = ScoringConfig.objects.first()
+
+        if not config:
+            config = ScoringConfig.objects.create()
+
         if data["salaire"] >= 100000:
-            score += 30
+            score += config.salaire_100k
+
         elif data["salaire"] >= 50000:
-            score += 20
+            score += config.salaire_50k
+
         else:
-            score += 10
+            score += config.salaire_min
 
         # marié
         if data["marie"] == "oui":
-            score += 10
+            score += config.marie
 
         # enfants
         if data["enfants"] <= 2:
-            score += 10
+            score += config.enfants
 
         # contrat
         if data["type_contrat"] == "cdi":
-            score += 25
+            score += config.cdi
 
         elif data["type_contrat"] == "fonctionnaire":
-            score += 30
+            score += config.fonctionnaire
 
         # ancienneté
         if data["anciennete"] >= 5:
-            score += 15
+            score += config.anciennete
 
         # apport
         if data["apport"] >= 500000:
-            score += 20
+            score += config.apport
 
         taux_endettement = (
             data["charges"] / data["salaire"]
         ) * 100
 
         if taux_endettement < 35:
-            score += 20
+            score += config.taux_endettement
 
         decision = "ACCEPTE"
 
@@ -70,3 +80,4 @@ class CalculateScoringView(generics.GenericAPIView):
                 2
             )
         })
+    

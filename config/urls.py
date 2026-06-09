@@ -24,6 +24,7 @@ urlpatterns = [
     path('api/', include('users.urls')),
     path('api/', include('clients.urls')),
     path('api/', include('produits.urls')),
+    path('api/scoring-config/' , include('scoring_config.urls')),
     path('api/', include('scoring.urls')),
     path('api/', include('simulations.urls')),
     path('api/', include('workflow.urls')),

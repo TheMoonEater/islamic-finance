@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'clients',
     'produits',
     'scoring',
+    'scoring_config',
     'simulations',
     'workflow',
     'documents',
