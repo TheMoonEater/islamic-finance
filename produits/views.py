@@ -10,9 +10,27 @@ class ProduitViewSet(viewsets.ModelViewSet):
 
     serializer_class = ProduitSerializer
 
+    def get_queryset(self):
 
-    def list(self, request):
+        queryset = Produit.objects.all()
 
-        print("NB PRODUITS =", Produit.objects.count())
+        search = self.request.GET.get("search")
+        category = self.request.GET.get("category")
+        ordering = self.request.GET.get("ordering")
 
-        return super().list(request)
+        if search:
+            queryset = queryset.filter(
+                nom__icontains=search
+            )
+
+        if category:
+            queryset = queryset.filter(
+                category=category
+            )
+
+        if ordering:
+            queryset = queryset.order_by(
+                ordering
+            )
+
+        return queryset
