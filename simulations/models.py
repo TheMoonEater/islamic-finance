@@ -11,6 +11,21 @@ class Simulation(models.Model):
 
     prix_bien = models.FloatField()
 
+    salaire_acheteur = models.FloatField(default=0)
+
+    salaire_co_acheteur = models.FloatField(
+        default=0,
+        blank=True
+    )
+
+    salaire_total = models.FloatField(default=0)
+
+    ce_brute = models.FloatField(default=0)
+
+    credit_consomme = models.FloatField(default=0)
+
+    ce_nette = models.FloatField(default=0)
+
     apport = models.FloatField(default=0)
 
     montant_finance = models.FloatField()
@@ -22,6 +37,18 @@ class Simulation(models.Model):
     duree_mois = models.IntegerField()
 
     mensualite = models.FloatField()
+
+    montant_remboursement = models.FloatField(
+        default=0
+    )
+
+    montant_total_marge = models.FloatField(
+        default=0
+    )
+
+    montant_total_tva = models.FloatField(
+        default=0
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
 
