@@ -10,6 +10,10 @@ class CartItemSerializer(serializers.ModelSerializer):
         source="product.nom",
         read_only=True
     )
+        prix = serializers.FloatField(
+        source="product.prix",
+        read_only=True
+    )
 
         class Meta:
             model = CartItem
