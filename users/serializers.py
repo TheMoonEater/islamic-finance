@@ -24,6 +24,11 @@ class RegisterSerializer(
             "username",
             "email",
             "password",
+            "phone",
+            "nom",
+            "prenom",
+            "date_naissance",
+            "numero_cni",
         )
 
     def create(self, validated_data):
@@ -32,15 +37,35 @@ class RegisterSerializer(
 
             username=validated_data["username"],
 
-            email=validated_data.get(
-                "email",
-                ""
-            ),
+            email=validated_data["email"],
 
             password=validated_data["password"],
 
-            role="CLIENT"
+            phone=validated_data.get(
+                "phone",
+                ""
+            ),
 
+            nom=validated_data.get(
+                "nom",
+                ""
+            ),
+
+            prenom=validated_data.get(
+                "prenom",
+                ""
+            ),
+
+            date_naissance=validated_data.get(
+                "date_naissance"
+            ),
+
+            numero_cni=validated_data.get(
+                "numero_cni",
+                ""
+            ),
+
+            role="CLIENT"
         )
 
         return user
