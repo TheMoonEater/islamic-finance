@@ -3,27 +3,25 @@ from rest_framework import serializers
 
 class ScoringSerializer(serializers.Serializer):
 
-    salaire = serializers.FloatField()
+    # Identification
+    age = serializers.IntegerField()
 
-    charges = serializers.FloatField()
+    nombre_personnes_charge = serializers.IntegerField()
 
-    marie = serializers.ChoiceField(
-        choices=[
-            ("oui", "Oui"),
-            ("non", "Non")
-        ]
-    )
+    habitation = serializers.CharField()
 
-    enfants = serializers.IntegerField()
+    niveau_instruction = serializers.CharField()
 
-    type_contrat = serializers.ChoiceField(
-        choices=[
-            ("cdi", "CDI"),
-            ("cdd", "CDD"),
-            ("fonctionnaire", "Fonctionnaire")
-        ]
-    )
+    # Professionnel
+    secteur_activite = serializers.CharField()
 
     anciennete = serializers.IntegerField()
 
-    apport = serializers.FloatField()
+    type_contrat = serializers.CharField()
+
+    # Financier
+    salaire = serializers.FloatField()
+
+    autres_revenus = serializers.FloatField()
+
+    charges = serializers.FloatField()
