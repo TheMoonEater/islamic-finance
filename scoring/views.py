@@ -4,6 +4,9 @@ from rest_framework.response import Response
 from scoring_config.models import ScoringConfig
 from .serializers import ScoringSerializer
 
+from clients.models import Client
+from scoring.models import Scoring
+
 
 class CalculateScoringView(generics.GenericAPIView):
 
@@ -26,7 +29,9 @@ class CalculateScoringView(generics.GenericAPIView):
         if not config:
             config = ScoringConfig.objects.create()
 
-        score = 0
+        identification = 0
+        professionnel = 0
+        financier = 0
 
         # =========================
         # AGE
@@ -37,13 +42,13 @@ class CalculateScoringView(generics.GenericAPIView):
         )
 
         if age < 30:
-            score += config.age_jeune
+            identification += config.age_jeune
 
         elif age <= 50:
-            score += config.age_moyen
+            identification += config.age_moyen
 
         else:
-            score += config.age_senior
+            identification += config.age_senior
 
         # =========================
         # PERSONNES A CHARGE
@@ -57,7 +62,7 @@ class CalculateScoringView(generics.GenericAPIView):
         )
 
         if personnes_charge <= 2:
-            score += config.personnes_charge
+            identification += config.personnes_charge
 
         # =========================
         # HABITATION
@@ -69,10 +74,10 @@ class CalculateScoringView(generics.GenericAPIView):
         )
 
         if habitation == "Proprietaire":
-            score += config.habitation_proprietaire
+            identification += config.habitation_proprietaire
 
         elif habitation == "Locataire":
-            score += config.habitation_locataire
+            identification += config.habitation_locataire
 
         # =========================
         # NIVEAU INSTRUCTION
@@ -88,10 +93,10 @@ class CalculateScoringView(generics.GenericAPIView):
             "Master",
             "Doctorat"
         ]:
-            score += config.niveau_universitaire
+            identification += config.niveau_universitaire
 
         elif niveau == "Secondaire":
-            score += config.niveau_secondaire
+            identification += config.niveau_secondaire
 
         # =========================
         # SECTEUR ACTIVITE
@@ -103,10 +108,10 @@ class CalculateScoringView(generics.GenericAPIView):
         )
 
         if secteur == "PUBLIC":
-            score += config.secteur_public
+            professionnel += config.secteur_public
 
         elif secteur == "PRIVE":
-            score += config.secteur_prive
+            professionnel += config.secteur_prive
 
         # =========================
         # CONTRAT
@@ -118,20 +123,20 @@ class CalculateScoringView(generics.GenericAPIView):
         )
 
         if contrat == "cdi":
-            score += config.cdi
+            professionnel += config.cdi
 
         elif contrat == "fonctionnaire":
-            score += config.fonctionnaire
+            professionnel += config.fonctionnaire
 
         elif contrat == "cdd":
-            score += config.cdd
+            professionnel += config.cdd
 
         # =========================
         # ANCIENNETE
         # =========================
 
         if data["anciennete"] >= 5:
-            score += config.anciennete
+            professionnel += config.anciennete
 
         # =========================
         # SALAIRE
@@ -149,13 +154,13 @@ class CalculateScoringView(generics.GenericAPIView):
         )
 
         if salaire >= 100000:
-            score += config.salaire_100k
+            financier += config.salaire_100k
 
         elif salaire >= 50000:
-            score += config.salaire_50k
+            financier += config.salaire_50k
 
         else:
-            score += config.salaire_min
+            financier += config.salaire_min
 
         # =========================
         # AUTRES REVENUS
@@ -169,7 +174,7 @@ class CalculateScoringView(generics.GenericAPIView):
         )
 
         if autres_revenus > 0:
-            score += config.autres_revenus
+            financier += config.autres_revenus
 
         # =========================
         # TAUX ENDETTEMENT
@@ -185,11 +190,20 @@ class CalculateScoringView(generics.GenericAPIView):
             ) * 100
 
         if taux_endettement < 35:
-            score += config.endettement
+            financier += config.endettement
 
         # =========================
         # DECISION
         # =========================
+
+        score = round(
+            (
+                identification
+                + professionnel
+                + financier
+            ) / 3,
+            2
+        )
 
         decision = "REFUSE"
 
@@ -199,11 +213,42 @@ class CalculateScoringView(generics.GenericAPIView):
         ):
             decision = "ACCEPTE"
 
+        # =========================
+        # ENREGISTREMENT SCORING
+        # =========================
+
+        client_id = request.data.get(
+            "client_id"
+        )
+
+        if client_id:
+
+            client = Client.objects.get(
+                id=client_id
+            )
+
+            scoring = Scoring.objects.create(
+                client=client,
+                score=score,
+                taux_endettement=taux_endettement,
+                decision=decision
+            )
+
+        else:
+
+            scoring = None
+
         return Response({
+
             "score": score,
+
             "decision": decision,
+
             "taux_endettement": round(
                 taux_endettement,
                 2
-            )
+            ),
+
+            "scoring_id":
+            scoring.id if scoring else None
         })
