@@ -37,70 +37,187 @@ def generate_scoring_pdf(
 
     elements = []
 
-    # TITRE
+    client = scoring.client
+
+    # =====================
+    # ENTETE
+    # =====================
+
     title = Paragraph(
-        "RAPPORT DE SCORING",
-        styles['Title']
+        "DOSSIER CLIENT",
+        styles["Title"]
     )
 
     elements.append(title)
 
-    elements.append(Spacer(1, 30))
+    elements.append(
+        Spacer(1, 20)
+    )
 
-    # CLIENT INFO
-    client = scoring.client
+    elements.append(
+        Paragraph(
+            "Plateforme de Finance Islamique",
+            styles["Heading2"]
+        )
+    )
 
-    infos = [
+    elements.append(
+        Spacer(1, 20)
+    )
 
-        ['Nom', client.nom],
+    # =====================
+    # IDENTITE CLIENT
+    # =====================
 
-        ['Prénom', client.prenom],
+    elements.append(
+        Paragraph(
+            "Informations Client",
+            styles["Heading2"]
+        )
+    )
 
-        ['Salaire', f"{client.salaire_mensuel} DA"],
+    data = [
 
-        ['Décision', scoring.decision],
+        ["Nom", client.nom],
+
+        ["Prénom", client.prenom],
+
+        ["Email", client.email],
+
+        ["Téléphone", client.telephone],
+
+        ["Adresse", client.adresse],
+
+        ["Situation familiale",
+         client.situation_familiale],
+
+        ["Personnes à charge",
+         str(client.nombre_personnes_charge)],
     ]
 
-    # SCORE INTERNE UNIQUEMENT
-    if not is_client:
-
-        infos.append([
-            'Score',
-            str(scoring.score)
-        ])
-
-        infos.append([
-            'Taux endettement',
-            f"{round(scoring.taux_endettement, 2)} %"
-        ])
-
     table = Table(
-        infos,
-        colWidths=[200, 250]
+        data,
+        colWidths=[180, 300]
     )
 
     table.setStyle(TableStyle([
 
-        ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
+        ('GRID', (0,0), (-1,-1), 1, colors.black),
 
-        ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
+        ('BACKGROUND', (0,0), (0,-1),
+         colors.lightgrey),
 
-        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ('FONTNAME', (0,0), (-1,-1),
+         'Helvetica'),
 
-        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
-
-        ('FONTSIZE', (0, 0), (-1, -1), 11),
-
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 10),
     ]))
 
     elements.append(table)
 
-    elements.append(Spacer(1, 30))
+    elements.append(
+        Spacer(1, 20)
+    )
+
+    # =====================
+    # PROFESSIONNEL
+    # =====================
+
+    elements.append(
+        Paragraph(
+            "Situation Professionnelle",
+            styles["Heading2"]
+        )
+    )
+
+    data = [
+
+        ["Secteur",
+         client.secteur_activite],
+
+        ["Contrat",
+         client.type_contrat],
+
+        ["Ancienneté",
+         f"{client.anciennete_annees} ans"],
+
+        ["Salaire",
+         f"{client.salaire_mensuel} DA"],
+    ]
+
+    table = Table(
+        data,
+        colWidths=[180,300]
+    )
+
+    table.setStyle(TableStyle([
+
+        ('GRID', (0,0), (-1,-1), 1,
+         colors.black),
+
+        ('BACKGROUND', (0,0), (0,-1),
+         colors.lightgrey),
+
+    ]))
+
+    elements.append(table)
+
+    elements.append(
+        Spacer(1,20)
+    )
+
+    # =====================
+    # SCORING
+    # =====================
+
+    elements.append(
+        Paragraph(
+            "Résultat Scoring",
+            styles["Heading2"]
+        )
+    )
+
+    scoring_data = [
+
+        ["Décision",
+         scoring.decision],
+    ]
+
+    if not is_client:
+
+        scoring_data.extend([
+
+            ["Score",
+             str(scoring.score)],
+
+            ["Taux d'endettement",
+             f"{round(scoring.taux_endettement,2)} %"]
+
+        ])
+
+    table = Table(
+        scoring_data,
+        colWidths=[180,300]
+    )
+
+    table.setStyle(TableStyle([
+
+        ('GRID', (0,0), (-1,-1), 1,
+         colors.black),
+
+        ('BACKGROUND', (0,0), (0,-1),
+         colors.lightgrey),
+
+    ]))
+
+    elements.append(table)
+
+    elements.append(
+        Spacer(1,30)
+    )
 
     footer = Paragraph(
         "Document généré automatiquement par Islamic Finance Platform",
-        styles['Italic']
+        styles["Italic"]
     )
 
     elements.append(footer)

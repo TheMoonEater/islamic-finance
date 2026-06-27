@@ -34,10 +34,9 @@ def scoring_pdf_view(
     )
 
     filename = (
-    f"{scoring.client.nom}"
-    f"{scoring.client.prenom}"
-    f"Scoring.pdf"
-  )
+        f"Dossier_{scoring.client.nom}_"
+        f"{scoring.client.prenom}.pdf"
+    )
 
     response[
     'Content-Disposition'
