@@ -5,19 +5,16 @@ from .views import (
     WorkflowStatsView
 )
 
-from .views import (
-    DashboardStatsView
-)
-
 urlpatterns = [
 
     path(
-        'dashboard/stats/',
+        "dashboard/stats/",
         DashboardStatsView.as_view()
     ),
-    path(
-    'dashboard/workflow-stats/',
-    WorkflowStatsView.as_view()
-),
-]
 
+    path(
+        "dashboard/workflow-stats/",
+        WorkflowStatsView.as_view()
+    ),
+
+]

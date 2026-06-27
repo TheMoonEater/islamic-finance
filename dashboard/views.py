@@ -1,20 +1,13 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+
+from users.permissions import IsBankStaff
 
 from .services import (
+    dashboard_charts,
+    get_dashboard_stats,
     demandes_by_status
-)
-
-from rest_framework.permissions import (
-    IsAuthenticated
-)
-
-from users.permissions import (
-    IsBankStaff,
-)
-
-from .services import (
-    get_dashboard_stats
 )
 
 
@@ -27,23 +20,20 @@ class DashboardStatsView(APIView):
 
     def get(self, request):
 
-        data = get_dashboard_stats()
+        return Response(
+            dashboard_charts()
+        )
 
-        return Response(data)
-    
 
 class WorkflowStatsView(APIView):
 
     permission_classes = [
         IsAuthenticated,
-        IsBankStaff
+        IsBankStaff,
     ]
 
     def get(self, request):
 
-        data = demandes_by_status()
-
-        return Response(data)
-
-
-# No module-level permission_classes required; views define their own
+        return Response(
+            demandes_by_status()
+        )
