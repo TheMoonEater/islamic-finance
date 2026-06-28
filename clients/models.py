@@ -2,6 +2,8 @@ from django.db import models
 from users.models import User
 
 
+
+
 class Client(models.Model):
 
     SITUATION_CHOICES = (
@@ -60,5 +62,22 @@ class Client(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
+    validation_comite = models.BooleanField(default=False)
+
     def __str__(self):
         return f"{self.nom} {self.prenom}"
+    
+
+    STATUT_CHOICES = (
+        ("EN_ATTENTE", "En attente"),
+        ("VALIDE", "Validé"),
+        ("REFUSE", "Refusé"),
+    )
+
+    statut = models.CharField(
+        max_length=20,
+        choices=STATUT_CHOICES,
+        default="EN_ATTENTE"
+    )
+
+

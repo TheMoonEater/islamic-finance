@@ -23,6 +23,7 @@ from .serializers import ClientSerializer
 
 from scoring.models import Scoring
 from documents.models import Document
+from rest_framework.decorators import action
 
 
 class ClientViewSet(viewsets.ModelViewSet):
@@ -181,6 +182,26 @@ class ClientViewSet(viewsets.ModelViewSet):
 
             ]
         })
+    
+    @action(detail=True, methods=["patch"])
+    def valider(self, request, pk=None):
+
+        client = self.get_object()
+
+        decision = request.data.get("decision")
+
+        if decision == "VALIDE":
+                client.statut = "VALIDE"
+
+        elif decision == "REFUSE":
+                client.statut = "REFUSE"
+
+        client.save()
+
+        return Response({
+                "message": "Décision enregistrée",
+                "statut": client.statut
+            })
 
     # =========================
     # PDF DOSSIER CLIENT
@@ -521,6 +542,11 @@ class ClientViewSet(viewsets.ModelViewSet):
         ] = (
             f'attachment; filename="{filename}"'
         )
+
+
+
+
+
 
         return response
 
